@@ -1,10 +1,10 @@
 <script setup>
-const props = defineProps({
-    clientsTable: {
-        type: Object,
-        required: true
-    }
-})
+import useClientsTable from '@/composables/useClientsTable'
+import useStore from '@/composables/useStore'
+
+const { coordinates, setCoordinates } = useStore()
+
+const { clientsTable } = useClientsTable()
 </script>
 
 <template>
@@ -20,7 +20,7 @@ const props = defineProps({
           </tr>
         </thead>
         <tbody>
-          <tr v-for="clients in clientsTable" :key="clients.id" @click="$emit('rowClientTableEvt', clients)">
+          <tr v-for="clients in clientsTable" :key="clients.id" @click="() => setCoordinates({ ...clients.address.geo })">
             <td scope="col">{{ clients.id }}</td>
             <td scope="col">{{ clients.name }}</td>
             <td scope="col">{{ clients.email }}</td>
@@ -34,6 +34,7 @@ const props = defineProps({
           </tr>
         </tbody>
       </table>
+      <div>{{ 'Coordenadas -> Lat: ' + coordinates.lat + ' Lng: ' + coordinates.lng }}</div>
     </div>
 </template>
 

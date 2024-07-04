@@ -1,5 +1,4 @@
 import axios from 'axios'
-
 // {
 //     "infoUsuario": {
 //         "nombre": "Pedro",
@@ -19,8 +18,10 @@ import axios from 'axios'
 //     }
 // }
 
+const _BASE_URL = import.meta.env.PROD ? 'https://httpbin.org' : 'http://httpbin.org'
+
 const newClientAPI = axios.create({
-    baseURL: 'http://httpbin.org'
+    baseURL: _BASE_URL
 })
 
 export default newClientAPI

@@ -1,52 +1,72 @@
-import { onMounted, ref } from 'vue';
+import { onMounted, ref, watch } from 'vue'
+import useStore from '@/composables/useStore'
+
+const { coordinates } = useStore()
 
 const useHereMap = () => {
 
-    const platform = ref(null);
-    const coordinates = ref({ lat: 40.730610, lng: -73.935242 });
-    const apikey = import.meta.env.VITE_HEREMAP_KEY;
+    const platform = ref(null)
+    const apikey = import.meta.env.VITE_HEREMAP_KEY
 
-    const hereMap = ref(null)
+    let hereMap = null
+    let hereMarker = null
+
+    const hereMapVueReference = ref(null)
 
     // Renderizar mapa
     const initializeHereMap = () => {
 
-        const mapContainer = hereMap.value;
-        const H = window.H;
-        // Obtain the default map types from the platform object
-        const maptypes = platform.value.createDefaultLayers();
+        const mapContainer = hereMapVueReference.value
+        const H = window.H
 
-        // Instantiate (and display) a map object:
-        const map = new H.Map(mapContainer, maptypes.vector.normal.map, {
-            zoom: 10,
+        const maptypes = platform.value.createDefaultLayers()
+
+        // Inicializa el mapa
+        hereMap = new H.Map(mapContainer, maptypes.vector.normal.map, {
+            zoom: 3,
             center: coordinates.value
-            // center object { lat: 40.730610, lng: -73.935242 }
         });
 
-        addEventListener("resize", () => map.getViewPort().resize());
+        // Se asegura de que el mapa ocupa todo su contenedor
+        addEventListener("resize", () => hereMap.getViewPort().resize())
 
-        // add behavior control
-        new H.mapevents.Behavior(new H.mapevents.MapEvents(map));
+        // Se implementan comportamientos como el zoom
+        new H.mapevents.Behavior(new H.mapevents.MapEvents(hereMap))
 
-        // add UI
-        H.ui.UI.createDefault(map, maptypes);
-        // End rendering the initial map
+        // Crea los compomentes de UI del mapa
+        H.ui.UI.createDefault(hereMap, maptypes)
+    }
+
+    // Metodo reutilizable para redibujar el mapa cuando las coordenadas cambien
+    const drawHereMap = (map, marker) => {
+        if(map) {
+            map.setCenter(coordinates.value)
+            marker.setGeometry(coordinates.value)
+        }
+    }
+
+    const addMarker =(map) => {
+        if(!map) return; // No hace nada si el mapa es null
+        hereMarker = new H.map.Marker(coordinates.value)
+        map.addObject(hereMarker)
     }
 
     onMounted(async() => {
-        // Initialize the platform object:
         const platformLocal = await new window.H.service.Platform({
-            'apikey': apikey
-        });
-        platform.value = platformLocal;
-        initializeHereMap();
+            apikey
+        })
+        platform.value = platformLocal
+        initializeHereMap() // Inicializa el mapa
+        addMarker(hereMap) // Dibuja el marcador en el mapa
     })
 
+    // Watch utilizado para redibujar el mapa cada vez que cambian las coordenadas
+    watch(coordinates.value, () => {
+        drawHereMap(hereMap, hereMarker)
+    })
 
     return {
-        hereMap,
-
-        coordinates
+        hereMapVueReference 
     }
 
 }

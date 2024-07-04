@@ -1,12 +1,12 @@
 <script setup>
 import useHereMap from '@/composables/useHereMap'
-const { hereMap } = useHereMap();
+const { hereMapVueReference } = useHereMap()
 </script>
 
 <template>
     <div id="map">
-        <!--In the following div the HERE Map will render-->
-        <div id="mapContainer" style="height:600px;width:100%" ref="hereMap"></div>
+        <!--En este div se renderizará el HereMap-->
+        <div id="mapContainer" ref="hereMapVueReference"></div>
     </div>
 </template>
 
@@ -15,7 +15,11 @@ const { hereMap } = useHereMap();
   width: 90vw;
   min-width: 360px;
   text-align: center;
-  margin: 5% auto;
+  margin: 1% auto;
   background-color: #ccc;
+}
+#mapContainer {
+  height:600px;
+  width:100%
 }
 </style>

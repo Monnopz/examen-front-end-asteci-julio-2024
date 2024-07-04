@@ -1,6 +1,6 @@
 <script setup>
-import useNewClientForm from '@/composables/useNewClientForm';
-const { clientForm, validClientForm, onNewClientSubmit } = useNewClientForm();
+import useNewClientForm from '@/composables/useNewClientForm'
+const { clientForm, validClientForm, onNewClientSubmit } = useNewClientForm()
 </script>
 
 <template>

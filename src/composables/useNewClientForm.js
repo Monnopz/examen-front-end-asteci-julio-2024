@@ -1,12 +1,13 @@
-import { ref, computed, watch } from 'vue';
-import newClientAPI from '@/api/newClientAPI';
+import { ref, computed, watch } from 'vue'
+import { _CURPVALIDATOR, _RFCVALIDATOR } from '@/helpers/validators';
+import newClientAPI from '@/api/newClientAPI'
 
 const newClient = async( client ) => {
     try {
-        const { data: resp } = await newClientAPI.post('/post', client);
-        return resp;
+        const { data: resp } = await newClientAPI.post('/post', client)
+        return resp
     } catch (error) {
-        return resp;
+        return resp
     }
 }
 
@@ -44,35 +45,33 @@ const useNewClientForm = () => {
             msgDelegacion: '',
             msgColonia: '',
         }
-    });
+    })
 
     const individualInputValidate = ( input, nameObject ,nameInput ) => {
-        if(!input && (nameInput !== 'segundoApellido')) return '*Campo obligatorio'; // Se agrega segundoApellido porque mas abajo esta condicionado, pero necesita no ser obligatorio si esta vacio
+        if(!input && (nameInput !== 'segundoApellido')) return '*Campo obligatorio' // Se agrega segundoApellido porque mas abajo esta condicionado, pero necesita no ser obligatorio si esta vacio
 
         if(nameInput === 'nombre' || nameInput === 'primerApellido' || nameInput === 'segundoApellido' || nameInput === 'estado' || nameInput === 'delegacion' || nameInput === 'colonia'){
-            const regExp = /[^a-z]+/i;
+            const regExp = /[^a-z]+/i
             if(input.match(regExp)) {
                 return clientForm.value[nameObject][nameInput] = clientForm.value[nameObject][nameInput].slice(0, clientForm.value[nameObject][nameInput].length - 1)
             }
         }
         if(nameInput === 'codigoPostal' || nameInput === 'numeroExterior'){
             if(input.toString().length > 5) {
-                return clientForm.value[nameObject][nameInput] = +clientForm.value[nameObject][nameInput].toString().slice(0, 5); 
+                return clientForm.value[nameObject][nameInput] = +clientForm.value[nameObject][nameInput].toString().slice(0, 5);
             }
         }
         if(nameInput === 'curp'){
-            const regExp = /[^a-z]+/i;
-            if(input.match(regExp)) {
-                return 'CURP incorrecta';
+            if(!_CURPVALIDATOR(input)) {
+                return 'CURP incorrecta'
             }
         }
         if(nameInput === 'rfc'){
-            const regExp = /[^a-z]+/i;
-            if(input.match(regExp)) {
-                return 'RFC incorrecto';
+            if(!_RFCVALIDATOR(input)) {
+                return 'RFC incorrecto'
             }
         }
-        return '';
+        return ''
     }
 
     const validateEntireForm = (clientFormErrors) => {
@@ -81,31 +80,31 @@ const useNewClientForm = () => {
             return clientForm.value.clientFormErrors.validClientFormMsg = 'Campos validados correctamente'
         }
         clientForm.value.clientFormErrors.validClientFormMsg = 'Existen campos por validar'
-        return clientForm.value.clientFormErrors.validClientForm = false;
+        return clientForm.value.clientFormErrors.validClientForm = false
     }
 
     watch( clientForm.value, () => {
-        clientForm.value.clientFormErrors.msgNombre = individualInputValidate(clientForm.value.infoUsuario.nombre, 'infoUsuario', 'nombre');
-        clientForm.value.clientFormErrors.msgPrimerApellido = individualInputValidate(clientForm.value.infoUsuario.primerApellido, 'infoUsuario', 'primerApellido');
-        clientForm.value.clientFormErrors.msgSegundoApellido = individualInputValidate(clientForm.value.infoUsuario.segundoApellido, 'infoUsuario', 'segundoApellido');
-        clientForm.value.clientFormErrors.msgCurp = individualInputValidate(clientForm.value.infoUsuario.curp, 'infoUsuario', 'curp');
-        clientForm.value.clientFormErrors.msgRfc = individualInputValidate(clientForm.value.infoUsuario.rfc, 'infoUsuario', 'rfc');
-        clientForm.value.clientFormErrors.msgCodigoPostal = individualInputValidate(clientForm.value.domicilio.codigoPostal, 'domicilio', 'codigoPostal');
-        clientForm.value.clientFormErrors.msgCalle = individualInputValidate(clientForm.value.domicilio.calle, 'domicilio', 'calle');
-        clientForm.value.clientFormErrors.msgNumeroExterior = individualInputValidate(clientForm.value.domicilio.numeroExterior, 'domicilio', 'numeroExterior');
-        clientForm.value.clientFormErrors.msgEstado = individualInputValidate(clientForm.value.domicilio.estado, 'domicilio', 'estado');
-        clientForm.value.clientFormErrors.msgDelegacion = individualInputValidate(clientForm.value.domicilio.delegacion, 'domicilio', 'delegacion');
-        clientForm.value.clientFormErrors.msgColonia = individualInputValidate(clientForm.value.domicilio.colonia, 'domicilio', 'colonia');
+        clientForm.value.clientFormErrors.msgNombre = individualInputValidate(clientForm.value.infoUsuario.nombre, 'infoUsuario', 'nombre')
+        clientForm.value.clientFormErrors.msgPrimerApellido = individualInputValidate(clientForm.value.infoUsuario.primerApellido, 'infoUsuario', 'primerApellido')
+        clientForm.value.clientFormErrors.msgSegundoApellido = individualInputValidate(clientForm.value.infoUsuario.segundoApellido, 'infoUsuario', 'segundoApellido')
+        clientForm.value.clientFormErrors.msgCurp = individualInputValidate(clientForm.value.infoUsuario.curp, 'infoUsuario', 'curp')
+        clientForm.value.clientFormErrors.msgRfc = individualInputValidate(clientForm.value.infoUsuario.rfc, 'infoUsuario', 'rfc')
+        clientForm.value.clientFormErrors.msgCodigoPostal = individualInputValidate(clientForm.value.domicilio.codigoPostal, 'domicilio', 'codigoPostal')
+        clientForm.value.clientFormErrors.msgCalle = individualInputValidate(clientForm.value.domicilio.calle, 'domicilio', 'calle')
+        clientForm.value.clientFormErrors.msgNumeroExterior = individualInputValidate(clientForm.value.domicilio.numeroExterior, 'domicilio', 'numeroExterior')
+        clientForm.value.clientFormErrors.msgEstado = individualInputValidate(clientForm.value.domicilio.estado, 'domicilio', 'estado')
+        clientForm.value.clientFormErrors.msgDelegacion = individualInputValidate(clientForm.value.domicilio.delegacion, 'domicilio', 'delegacion')
+        clientForm.value.clientFormErrors.msgColonia = individualInputValidate(clientForm.value.domicilio.colonia, 'domicilio', 'colonia')
     
         // Llama el metodo para validar todo el form esparciendo el objeto para romper referencia
-        validateEntireForm({...clientForm.value.clientFormErrors});
+        validateEntireForm({...clientForm.value.clientFormErrors})
     }, { immediate: true })
 
     const onNewClientSubmit = async() => {
         if(clientForm.value.clientFormErrors.validClientForm) {
             // Obtiene el valor de la propiedad reactiva y lo convierte a JSON rompiendo tambien referencias
-            const resp = await newClient(JSON.stringify({ infoUsuario: {...clientForm.value.infoUsuario}, domicilio: {...clientForm.value.domicilio} }));
-            alert('Nuevo registro guardado con éxito')
+            const resp = await newClient(JSON.stringify({ infoUsuario: {...clientForm.value.infoUsuario}, domicilio: {...clientForm.value.domicilio} }))
+            alert(`Nuevo registro guardado con éxito\n ${JSON.stringify(resp)}`)
             
         }
     }
