@@ -12,14 +12,15 @@ const { hereMapVueReference } = useHereMap()
 
 <style scoped>
 #map {
-  width: 90vw;
-  min-width: 360px;
+  width: 80vw;
+  max-width: 1920px;
+  height: 30%;
   text-align: center;
   margin: 1% auto;
   background-color: #ccc;
 }
 #mapContainer {
-  height:600px;
-  width:100%
+  height: 600px;
+  width: 100%
 }
 </style>
