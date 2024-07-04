@@ -13,7 +13,7 @@ const getClients = async() => {
 
 const useClientsTable = () => {
 
-    let clientsTable = ref([]);
+    const clientsTable = ref([]);
 
     onMounted(async () => {
         clientsTable.value = await getClients();
@@ -21,7 +21,7 @@ const useClientsTable = () => {
 
 
     return {
-        clientsTable
+        clientsTable,
     }
 
 }
